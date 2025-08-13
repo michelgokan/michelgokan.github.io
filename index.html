@@ -55,8 +55,52 @@
         ol {
             margin: 0;
         }
+        .heading-left{
+            width: 15%;
+            text-align: center;
+        }
         .bio{
             text-align: justify;
+        }
+        .github{
+            width: 100%;
+        }
+        .title {
+            font-size: .95em;
+            font-weight: bold;
+            color: #2E3D48;
+            margin-bottom: 4px
+        }
+
+        .gscholar, .gh {
+            margin-top: 5px;
+            padding: 6px
+        }
+
+        .gscholar-stats {
+            font-size: .9em;
+            color: #2E3D48;
+            margin-bottom: 6px
+        }
+
+        .gscholar-chart img {
+            width: 100%;
+            height: auto;
+            display: block
+        }
+
+        .gh-chart {
+            display: block;
+            width: 100%;
+            max-width: 220px;
+            border: 0
+        }
+
+        .gh-micro {
+            text-align: center;
+            font-size: .9em;
+            opacity: .8;
+            font-size: 70%
         }
     </style>
 </head>
@@ -75,8 +119,22 @@
 
     <table>
         <tr>
-            <td width="25%">
+            <td class="heading-left">
                 <img src="https://0.gravatar.com/avatar/75a23d19a9d5aa6c5781f8bceb45293c955318a74c0ffe5d2e6d274f3958cbd2?size=512" alt="Michel Gokan Khan" class="profile-pic">
+                <!-- GitHub contributions -->
+                <div class="gh">
+                  <!-- <div class="title">GitHub Contributions</div> -->
+                  <a href="https://github.com/michelgokan"><img class="gh-chart" src="https://ghchart.rshah.org/2E3D48/michelgokan" alt="GitHub contributions" loading="lazy"></a>
+                  <div class="gh-micro" id="gh-micro" aria-live="polite"></div>
+                </div>
+                <!-- Google Scholar summary -->
+                <div class="gscholar">
+                  <!-- <div class="title">Google Scholar</div> -->
+                  <div class="gscholar-chart">
+                    <a href="https://scholar.google.com/citations?user=LJV0pHQAAAAJ"><img src="assets/gs_citations.svg" alt="Citations per year"></a>
+                    <div class="gscholar-stats" id="gscholar-stats">Loading…</div>
+                  </div>
+                </div>
             </td>
             <td>
                 <h1>Michel Gokan Khan</h1>
@@ -357,7 +415,31 @@
             [ <a href="#contacts">Contact</a> ]
         </div>
 
-    <p><i>Last updated: December 2024</i></p>
+    <p><i>Last updated: August 2025</i></p>
+    <script>
+        /* GitHub numbers line */
+        (function(){
+          var el=document.getElementById('gh-micro'); if(!el) return;
+          fetch('contrib.json',{cache:'no-store'})
+            .then(r=>r.ok?r.json():null)
+            .then(d=>{ if(!d) return;
+              var fmt={year:'numeric',month:'short'};
+              el.textContent=(d.totalCalendar||0).toLocaleString()+
+                ' GitHub contribs. past 12 months';
+                 // + ' ('+new Date(d.since).toLocaleDateString('en-GB',fmt)+'–'+new Date(d.until).toLocaleDateString('en-GB',fmt)+')';
+            }).catch(()=>{});
+        })();
 
+        /* Scholar summary line*/
+        (function(){
+          var el=document.getElementById('gscholar-stats'); if(!el) return;
+          fetch('gscholar.json',{cache:'no-store'})
+            .then(r=>r.ok?r.json():null)
+            .then(d=>{ if(!d) return;
+              el.textContent = d.citations_all.toLocaleString()+
+                ' citations · h-index '+d.h_index;
+            }).catch(()=>{});
+        })();
+    </script>
 </body>
 </html>
