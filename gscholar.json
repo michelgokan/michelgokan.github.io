@@ -1,0 +1,50 @@
+{
+  "citations_all": 205,
+  "recent_citations": 197,
+  "h_index": 8,
+  "h_index_recent": 7,
+  "i10_index": 8,
+  "i10_index_recent": 7,
+  "graph": [
+    {
+      "year": 2016,
+      "citations": 1
+    },
+    {
+      "year": 2017,
+      "citations": 1
+    },
+    {
+      "year": 2018,
+      "citations": 4
+    },
+    {
+      "year": 2019,
+      "citations": 2
+    },
+    {
+      "year": 2020,
+      "citations": 15
+    },
+    {
+      "year": 2021,
+      "citations": 18
+    },
+    {
+      "year": 2022,
+      "citations": 39
+    },
+    {
+      "year": 2023,
+      "citations": 55
+    },
+    {
+      "year": 2024,
+      "citations": 38
+    },
+    {
+      "year": 2025,
+      "citations": 32
+    }
+  ]
+}
