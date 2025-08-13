@@ -1,54 +1,57 @@
 name: Update Google Scholar stats
-
 on:
-  schedule:
-    - cron: "13 3 * * *"
+  schedule: [{ cron: "13 3 * * *" }]
   workflow_dispatch:
-
-permissions:
-  contents: write
-
+permissions: { contents: write }
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Fetch Google Scholar profile
+      - name: Fetch Scholar via SerpAPI
+        env:
+          SERPAPI_API_KEY: ${{ secrets.SERPAPI_API_KEY }}
+          GS_AUTHOR_ID: LJV0pHQAAAAJ
         run: |
-          pip install scholarly matplotlib
-          python <<'PY'
-          from scholarly import scholarly
-          import json, datetime, matplotlib.pyplot as plt
+          set -euo pipefail
+          curl -sS "https://serpapi.com/search.json?engine=google_scholar_author&author_id=${GS_AUTHOR_ID}&hl=en&api_key=${SERPAPI_API_KEY}" \
+          | jq '{
+              citations_all:   (.cited_by.table[] | select(.citations) | .citations.all),
+              recent_citations:(.cited_by.table[] | select(.citations) | .citations | to_entries | map(select(.key|startswith("since_")))[0].value // null),
+              h_index:         (.cited_by.table[] | select(.h_index)  | .h_index.all),
+              h_index_recent:  (.cited_by.table[] | select(.h_index)  | .h_index | to_entries | map(select(.key|startswith("since_")))[0].value // null),
+              i10_index:       (.cited_by.table[] | select(.i10_index)| .i10_index.all),
+              i10_index_recent:(.cited_by.table[] | select(.i10_index)| .i10_index | to_entries | map(select(.key|startswith("since_")))[0].value // null),
+              graph:           (.cited_by.graph)
+            }' > gscholar.json
 
-          USER_ID = "LJV0pHQAAAAJ"  # your scholar ID
-          author = scholarly.search_author_id(USER_ID)
-          data = {
-              "name": author.name,
-              "citations_all": author.citedby,
-              "citations_5y": author.citedby5y,
-              "h_index": author.hindex,
-              "i10_index": author.i10index,
-              "yearly_citations": author.cites_per_year,
-              "updated": datetime.datetime.utcnow().isoformat() + "Z"
-          }
-          # Save JSON
-          with open('gscholar.json', 'w') as f:
-              json.dump(data, f, indent=2)
-
-          # Save simple SVG chart
-          years = sorted(data["yearly_citations"].keys())
-          counts = [data["yearly_citations"][y] for y in years]
-          plt.figure(figsize=(4,1.5))
-          plt.bar(years, counts, color="#2E3D48")
-          plt.xticks(years, rotation=45, fontsize=6)
-          plt.yticks(fontsize=6)
-          plt.tight_layout()
-          plt.savefig("assets/gs_citations.svg", format="svg")
-          PY
-
-      - name: Commit updates
-        uses: stefanzweifel/git-auto-commit-action@v5
+      - name: Render tiny SVG chart (monochrome)
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const d = JSON.parse(fs.readFileSync('gscholar.json','utf8'));
+            const pts = (d.graph||[]).slice(-12); // last 12 years
+            const W=720, H=120, P=24;
+            const max = Math.max(1, ...pts.map(p=>p.citations||0));
+            const barW = (W - P*2) / (pts.length || 1);
+            let bars = '', labels='';
+            pts.forEach((p,i)=>{
+              const h = Math.round(((p.citations||0)/max)*(H-P*2));
+              const x = Math.round(P + i*barW);
+              const y = Math.round(H-P - h);
+              bars += `<rect x="${x}" y="${y}" width="${Math.max(1,barW-2)}" height="${h}" fill="#2E3D48"/>`;
+              labels += `<text x="${x+2}" y="${H-6}" font-size="9" fill="#2E3D48">${p.year}</text>`;
+            });
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
+              <rect x="0" y="0" width="100%" height="100%" fill="white" stroke="black" stroke-width="1"/>
+              ${bars}
+              ${labels}
+            </svg>`;
+            require('fs').mkdirSync('assets',{recursive:true});
+            fs.writeFileSync('assets/gs_citations.svg', svg);
+      - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "chore: update Google Scholar stats"
-          file_pattern: gscholar.json assets/gs_citations.svg
+          file_pattern: "gscholar.json assets/gs_citations.svg"
