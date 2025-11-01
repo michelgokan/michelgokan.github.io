@@ -25,8 +25,8 @@ jobs:
             const to = new Date();
 
             const query = `
-              query($from: DateTime!, $to: DateTime!) {
-                viewer {
+              query($user: String!, $from: DateTime!, $to: DateTime!) {
+                user(login: $user) {
                   login
                   contributionsCollection(from: $from, to: $to) {
                     contributionCalendar { totalContributions }
@@ -40,6 +40,7 @@ jobs:
               }`;
 
             const res = await github.graphql(query, {
+              user: "YOUR_GITHUB_USERNAME",
               from: from.toISOString(),
               to: to.toISOString()
             });
