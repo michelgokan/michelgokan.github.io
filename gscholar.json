@@ -1,10 +1,10 @@
 {
-  "citations_all": 230,
-  "recent_citations": 222,
-  "h_index": 8,
+  "citations_all": 232,
+  "recent_citations": 224,
+  "h_index": 9,
   "h_index_recent": 8,
-  "i10_index": 8,
-  "i10_index_recent": 7,
+  "i10_index": 9,
+  "i10_index_recent": 8,
   "graph": [
     {
       "year": 2016,
@@ -44,7 +44,7 @@
     },
     {
       "year": 2025,
-      "citations": 51
+      "citations": 53
     }
   ]
 }
