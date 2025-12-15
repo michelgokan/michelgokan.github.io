@@ -1,6 +1,6 @@
 {
-  "citations_all": 232,
-  "recent_citations": 224,
+  "citations_all": 233,
+  "recent_citations": 225,
   "h_index": 9,
   "h_index_recent": 8,
   "i10_index": 9,
@@ -44,7 +44,7 @@
     },
     {
       "year": 2025,
-      "citations": 53
+      "citations": 54
     }
   ]
 }
