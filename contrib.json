@@ -1,12 +1,12 @@
 {
   "login": "michelgokan",
-  "since": "2025-02-06T03:57:04.866Z",
-  "until": "2026-02-06T03:57:04.866Z",
-  "totalCalendar": 2023,
+  "since": "2025-02-07T03:52:56.115Z",
+  "until": "2026-02-07T03:52:56.115Z",
+  "totalCalendar": 2021,
   "restrictedContributionsCount": 1826,
-  "commits": 189,
+  "commits": 188,
   "prs": 4,
   "issues": 1,
-  "reviews": 1,
-  "generatedAt": "2026-02-06T03:57:05.569Z"
+  "reviews": 0,
+  "generatedAt": "2026-02-07T03:52:57.198Z"
 }
